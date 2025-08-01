@@ -1,6 +1,7 @@
 import logging
 import gspread
 from datetime import datetime, time, timedelta
+from telegram import ReplyKeyboardMarkup
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, CallbackQueryHandler,
@@ -26,6 +27,8 @@ def main_menu():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+menu_keyboard = ReplyKeyboardMarkup([['/menu']], resize_keyboard=True)
+
 # --- ВЫБОР РАЗДЕЛА ---
 def section_menu():
     keyboard = [
@@ -44,7 +47,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         f"Сәлеметсіз бе, @{username}! Қош келдіңіз! 👋\n\nТөмендегі мәзірден таңдаңыз:",
-        reply_markup=main_menu()
+        InlineKeyboardButton("🔙 Басты бетке оралу", callback_data='menu')
     )
 
 # --- /MENU ---
@@ -65,8 +68,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(f"{data.capitalize()} бойынша не істегеніңізді жазыңыз:")
 
     elif data == "table":
-        await query.message.reply_text("📊 Google Sheets-ті тексеріңіз: [IELTS Tracker](https://docs.google.com/spreadsheets/d/174A32kv9iWEYRpcmqab1KorLqsqimgAVGUbLb_zjnCI)", parse_mode='Markdown')
-        reply_markup=main_menu()
+        await query.message.reply_text("📊 Google Sheets-ті тексеріңіз: [IELTS Tracker](https://docs.google.com/spreadsheets/d/174A32kv9iWEYRpcmqab1KorLqsqimgAVGUbLb_zjnCI)", parse_mode='Markdown', reply_markup=menu_keyboard)
 
     elif data == "progress":
         user = query.from_user
@@ -93,9 +95,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             mark = activity[day.strftime('%Y-%m-%d')]
             calendar += f"{day.strftime('%d.%m')} - {mark}\n"
 
+        await query.message.reply_text(calendar, parse_mode="Markdown", reply_markup=menu_keyboard)
 
-        await query.message.reply_text(calendar, parse_mode="Markdown")
-        reply_markup=main_menu()
 
     elif data == "top":
         records = worksheet.get_all_records()
@@ -112,9 +113,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for i, (user, score) in enumerate(top, 1):
             leaderboard += f"{i}. @{user} — {score} entries\n"
 
-        await query.message.reply_text(leaderboard, parse_mode="Markdown")
-        reply_markup=main_menu()
-        
+        await query.message.reply_text(leaderboard, parse_mode="Markdown", reply_markup=menu_keyboard)
+
+
     elif data == "menu":
         await query.message.reply_text("Басты мәзір:", reply_markup=main_menu())
 
