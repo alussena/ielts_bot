@@ -47,7 +47,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         f"Сәлеметсіз бе, @{username}! Қош келдіңіз! 👋\n\nТөмендегі мәзірден таңдаңыз:",
-        InlineKeyboardButton("🔙 Басты бетке оралу", callback_data='menu')
+        reply_markup=main_menu()
     )
 
 # --- /MENU ---
