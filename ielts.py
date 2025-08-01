@@ -66,6 +66,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == "table":
         await query.message.reply_text("📊 Google Sheets-ті тексеріңіз: [IELTS Tracker](https://docs.google.com/spreadsheets/d/174A32kv9iWEYRpcmqab1KorLqsqimgAVGUbLb_zjnCI)", parse_mode='Markdown')
+        reply_markup=main_menu()
 
     elif data == "progress":
         user = query.from_user
@@ -94,6 +95,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         await query.message.reply_text(calendar, parse_mode="Markdown")
+        reply_markup=main_menu()
 
     elif data == "top":
         records = worksheet.get_all_records()
@@ -111,7 +113,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             leaderboard += f"{i}. @{user} — {score} entries\n"
 
         await query.message.reply_text(leaderboard, parse_mode="Markdown")
-
+        reply_markup=main_menu()
+        
     elif data == "menu":
         await query.message.reply_text("Басты мәзір:", reply_markup=main_menu())
 
